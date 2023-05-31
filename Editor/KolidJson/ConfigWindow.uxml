@@ -1,0 +1,29 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="./UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement style="width: auto; margin-left: 1px; margin-right: 1px; margin-top: 1px; margin-bottom: 1px; border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; border-left-color: rgb(103, 103, 103); border-right-color: rgb(77, 77, 77); border-top-color: rgb(103, 103, 103); border-bottom-color: rgb(103, 103, 103); border-top-left-radius: 5px; border-bottom-left-radius: 5px; border-top-right-radius: 5px; border-bottom-right-radius: 5px; padding-left: 1px; padding-right: 1px; padding-top: 1px; padding-bottom: 1px; background-color: rgba(0, 0, 0, 0); flex-grow: 1; min-width: 360px; min-height: 100px;">
+        <ui:VisualElement style="background-color: rgb(51, 51, 51); margin-left: 6px; margin-right: 6px; margin-top: 6px; margin-bottom: 6px; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; border-top-left-radius: 3px; border-bottom-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-left-width: 3px; border-right-width: 3px; border-top-width: 3px; border-bottom-width: 3px; border-left-color: rgb(38, 38, 38); border-right-color: rgb(38, 38, 38); border-top-color: rgb(38, 38, 38); border-bottom-color: rgb(38, 38, 38);">
+            <ui:VisualElement style="margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px; flex-direction: row; background-color: rgba(0, 0, 0, 0);">
+                <ui:TextField picking-mode="Ignore" label="RootPath" value="filler text" text="filler text" name="RootPath" style="width: auto; flex-grow: 1;" />
+            </ui:VisualElement>
+            <ui:VisualElement style="margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px; flex-direction: row; min-width: auto; background-color: rgba(0, 0, 0, 0);">
+                <ui:TextField picking-mode="Ignore" label="ScenePath" value="filler text" text="filler text" name="ScenePath" style="width: auto; flex-grow: 1; flex-shrink: 0;" />
+            </ui:VisualElement>
+            <ui:VisualElement style="margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px; flex-direction: row-reverse; min-width: auto; background-color: rgba(38, 38, 38, 0); padding-left: 2px; padding-right: 2px; padding-top: 2px; padding-bottom: 2px;">
+                <ui:Button text="Bind" display-tooltip-when-elided="true" name="Bind" tooltip="绑定上述的参数" style="background-color: rgb(52, 132, 51);" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement style="margin-left: 6px; margin-right: 6px; margin-top: 6px; margin-bottom: 6px; border-left-width: 3px; border-right-width: 3px; border-top-width: 3px; border-bottom-width: 3px; border-top-left-radius: 3px; border-bottom-left-radius: 3px; border-top-right-radius: 3px; border-bottom-right-radius: 3px; border-left-color: rgba(38, 38, 38, 255); border-right-color: rgba(38, 38, 38, 255); border-top-color: rgba(38, 38, 38, 255); border-bottom-color: rgba(38, 38, 38, 255); background-color: rgba(51, 51, 51, 255);">
+            <ui:VisualElement style="margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px; flex-direction: row;">
+                <ui:TextField picking-mode="Ignore" label="SaveFileName" value="filler text" text="filler text" name="SaveFileName" style="flex-shrink: 0; flex-grow: 1;" />
+                <ui:Button text="Create" display-tooltip-when-elided="true" name="Create" />
+            </ui:VisualElement>
+            <ui:VisualElement style="margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px; flex-direction: row;">
+                <ui:DropdownField label="SaveFile" index="-1" name="SaveFile" style="flex-grow: 1; width: auto;" />
+                <ui:Button text="Delete" display-tooltip-when-elided="true" name="Delete" />
+            </ui:VisualElement>
+            <ui:VisualElement style="margin-left: 3px; margin-right: 3px; margin-top: 3px; margin-bottom: 3px; flex-direction: row;">
+                <ui:DropdownField label="Scene" index="-1" name="Scene" style="flex-grow: 1; align-items: stretch; width: 30%; -unity-text-align: upper-left;" />
+                <ui:Button text="CreateSceneFile" display-tooltip-when-elided="true" name="CreateSceneFile" tooltip="为该场景创建一个存档文件.夹." style="-unity-text-align: middle-center; white-space: nowrap; flex-grow: 0; background-color: rgb(52, 132, 51);" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
