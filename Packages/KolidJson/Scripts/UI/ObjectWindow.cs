@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
+using System.Reflection;
 using KolidSoft.DesignPattern;
 using KolidSoft.Json.Builder;
 using KolidSoft.Json.Export;
@@ -102,6 +102,18 @@ namespace KolidSoft.Json.UI
                 UnityEditorInternal.InternalEditorUtility.AddTag(JsonLayoutTag);
             if (!UnityEditorInternal.InternalEditorUtility.tags.Equals(JsonEditingTag))
                 UnityEditorInternal.InternalEditorUtility.AddTag(JsonEditingTag);
+                
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            Type type = null;
+            foreach (var assembly in assemblies)
+            {
+                type = assembly.GetType("UnityEditor.AddressableAssets.Build.DataBuilders.BuildScriptPackedMode");
+                if (type != null) break;
+            }
+            if (type == null) return;
+            var field = type.GetField("s_SkipCompilePlayerScripts", BindingFlags.Static | BindingFlags.NonPublic);
+            if (field == null) throw new Exception("This lib out of data");
+            field.SetValue(null, true);
         }
 
         public void CreateGUI()
