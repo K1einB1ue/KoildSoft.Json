@@ -31,4 +31,5 @@
 5.  Use `JsonSoft` → `Json/ObjectWindow` to modify `JsonObject`,
 
    `JsonSoft` → `Json/TypeWindow` to modify `JsonObject.JsonQuery(string key)`
+   
 6.  If you are using `Adressables`, you have to set `BuildScriptPackedMode.s_SkipCompilePlayerScripts = true;`
