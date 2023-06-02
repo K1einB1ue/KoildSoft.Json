@@ -1,6 +1,6 @@
 # Platforms
 
-* Unity 2021.3.20 +
+* Unity 2022.2.21 +
 
 #  Release
 

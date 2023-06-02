@@ -98,7 +98,7 @@ namespace KolidSoft.Json.UI
             
             TypeList.itemsSource = _typesBinding;
 
-            TypeList.onSelectionChange += objs =>
+            TypeList.selectionChanged += objs =>
             {
                 foreach (Type type in objs)
                 {
@@ -149,7 +149,7 @@ namespace KolidSoft.Json.UI
             
             DetailList.itemsSource = _detail;
 
-            DetailList.onSelectionChange += objs => {};
+            DetailList.selectionChanged += objs => {};
             
             PathList.makeItem = () =>
             {
@@ -173,7 +173,7 @@ namespace KolidSoft.Json.UI
             
             PathList.itemsSource = _unbindPaths;
 
-            PathList.onSelectionChange += objs => {};
+            PathList.selectionChanged += objs => {};
 
             DeposeType.clicked += () =>
             {

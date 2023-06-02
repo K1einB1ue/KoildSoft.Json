@@ -11,6 +11,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
+
+
 namespace KolidSoft.Json.UI
 {
     /*存储存档根目录-----------------------------------------------------------------------+
@@ -39,12 +41,69 @@ namespace KolidSoft.Json.UI
         //主体的场景和Uuid(然后定位到一个场景的物体)
         [Save(DefaultValue = "")] public string Scene;
         [Save(DefaultValue = "")] public string Uuid;
+        
+        private static SaveSave _instance = null;
+        public static SaveSave Instance
+        {
+            get
+            {
+                if (_instance != null) return _instance;
+                var saveSavePath = Path.Combine(
+                    PathSetting.Setting.RootPath, JsonObject.SaveFile, ObjectWindow.SaveSaveFullName
+                );
+                _instance = saveSavePath.BuildObject<SaveSave>();
+                return _instance;
+            }
+        }
+
+        public static void Save()
+        {
+            var saveSavePath = Path.Combine(
+                PathSetting.Setting.RootPath,JsonObject.SaveFile,ObjectWindow.SaveSaveFullName
+            );
+            Instance.BuildJToken().Save(saveSavePath);
+        }
+
+        public static void Reload()
+        {
+            _instance = null;
+        }
     }
 
     //每个存档下每个场景需要存的东西
     public class SceneSave
     {
         [Save] public List<LayoutInfo> LayoutInfo = new();
+        
+        private static SceneSave _instance = null;
+        
+        public static SceneSave Instance
+        {
+            get
+            {
+                if (_instance != null) return _instance;
+                var sceneSavePath = Path.Combine(
+                    PathSetting.Setting.RootPath, JsonObject.SaveFile, SceneManager.GetActiveScene().name,
+                    ObjectWindow.SceneSaveFullName
+                );
+                _instance = sceneSavePath.BuildObject<SceneSave>();
+                return _instance;
+            }
+        }
+
+        public static void Save()
+        {
+            var sceneSavePath = Path.Combine(
+                PathSetting.Setting.RootPath, JsonObject.SaveFile, SceneManager.GetActiveScene().name,
+                ObjectWindow.SceneSaveFullName
+            );
+            Instance.BuildJToken().Save(sceneSavePath);
+        }
+
+        public static void Reload()
+        {
+            _instance = null;
+        }
     }
 
     public class LayoutInfo
@@ -102,7 +161,7 @@ namespace KolidSoft.Json.UI
                 UnityEditorInternal.InternalEditorUtility.AddTag(JsonLayoutTag);
             if (!UnityEditorInternal.InternalEditorUtility.tags.Equals(JsonEditingTag))
                 UnityEditorInternal.InternalEditorUtility.AddTag(JsonEditingTag);
-                
+            
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             Type type = null;
             foreach (var assembly in assemblies)
@@ -200,10 +259,10 @@ namespace KolidSoft.Json.UI
                 var index = ObjectsList.selectedIndex;
                 if (index == -1) return;
                 var target = _editingTargets[index];
-                if (target.uuid == _saveSave.Uuid)
+                if (target.uuid == SaveSave.Instance.Uuid)
                 {
-                    _saveSave.Uuid = "";
-                    _saveSave.Scene = "";
+                    SaveSave.Instance.Uuid = "";
+                    SaveSave.Instance.Scene = "";
                 }
                 JsonObject.Load(target.uuid).Delete();
                 AssetDatabase.Refresh();
@@ -222,26 +281,26 @@ namespace KolidSoft.Json.UI
             {
                 var index = ObjectsList.selectedIndex;
                 if (index == -1) return;
-                _saveSave.Uuid = _editingTargets[index].uuid;
-                _saveSave.Scene = SceneName.text;
+                SaveSave.Instance.Uuid = _editingTargets[index].uuid;
+                SaveSave.Instance.Scene = SceneName.text;
                 Save();
             };
 
             Subject.clicked += () =>
             {
-                if (_saveSave.Uuid == "")
+                if (SaveSave.Instance.Uuid == "")
                 {
                     Debug.LogWarning("没有绑定主体");
                     return;
                 }
 
-                if (SceneManager.GetActiveScene().name != _saveSave.Scene)
+                if (SceneManager.GetActiveScene().name != SaveSave.Instance.Scene)
                 {
-                    Debug.Log($"主体在场景:{_saveSave.Scene}中");
+                    Debug.Log($"主体在场景:{SaveSave.Instance.Scene}中");
                     return;
                 }
                 
-                var index = _editingTargets.FindIndex(o => o.uuid == _saveSave.Uuid);
+                var index = _editingTargets.FindIndex(o => o.uuid == SaveSave.Instance.Uuid);
                 Selection.activeObject = _editingTargets[index].gameObject;
                 ObjectsList.selectedIndex = index;
             };
@@ -299,7 +358,7 @@ namespace KolidSoft.Json.UI
             
             ObjectsList.itemsSource = _editingTargets;
 
-            ObjectsList.onSelectionChange += objs =>
+            ObjectsList.selectionChanged += objs =>
             {
                 foreach (JsonEditingTarget obj in objs)
                 {
@@ -324,8 +383,8 @@ namespace KolidSoft.Json.UI
             SaveFile.choices = newChoices;
         }
 
-        private SceneSave _sceneSave = new();
-        private SaveSave _saveSave = new();
+        //private SceneSave _sceneSave = new();
+        //private SaveSave _saveSave = new();
         private readonly List<JsonEditingTarget> _editingTargets = new();
         
 
@@ -335,16 +394,11 @@ namespace KolidSoft.Json.UI
         private void Save()
         {
             if (SaveFile.index == -1) return;
-            var setting = PathSetting.Setting;
-            var saveFile = SaveFile.value;
-            var saveSavePath = Path.Combine(
-                setting.RootPath,saveFile,SaveSaveFullName
-            );
-            _saveSave.BuildJToken().Save(saveSavePath);
-            var sceneSavePath = Path.Combine(
-                setting.RootPath,saveFile,SceneManager.GetActiveScene().name,SceneSaveFullName
-            );
-            _sceneSave.LayoutInfo.Clear();
+            JsonObject.SaveFile = SaveFile.value;
+            SaveSave.Save();
+            
+            
+            SceneSave.Instance.LayoutInfo.Clear();
             foreach (var editingTarget in _editingTargets)
             {
                 var info = new LayoutInfo
@@ -354,10 +408,15 @@ namespace KolidSoft.Json.UI
                 var trans = editingTarget.transform;
                 info.Position = trans.position;
                 info.Rotation = trans.rotation;
-                _sceneSave.LayoutInfo.Add(info);
+                SceneSave.Instance.LayoutInfo.Add(info);
             }
-            _sceneSave.BuildJToken().Save(sceneSavePath);
+            SceneSave.Save();
+            
         }
+
+        
+
+        
 
         private JsonLayoutSpace _layoutSpace = null;
         public JsonLayoutSpace LayoutSpace
@@ -380,7 +439,7 @@ namespace KolidSoft.Json.UI
                 layout.saveFile = saveFile;
                 _layoutSpace = layout;
                 
-                foreach (var layoutInfo in _sceneSave.LayoutInfo)
+                foreach (var layoutInfo in SceneSave.Instance.LayoutInfo)
                 {
                     var type = JsonObject.LoadType(layoutInfo.Uuid);
                     var o = new GameObject
@@ -451,8 +510,8 @@ namespace KolidSoft.Json.UI
                     ObjectsList.Rebuild();
                     ObjectsList.selectedIndex = -1;
                     
-                    _saveSave = new();
-                    _sceneSave = new();
+                    SaveSave.Reload();
+                    SceneSave.Reload();
                     //清除编辑页(同时内部会保存目前编辑的对象)
                     SelectTarget = null;
                     //关闭类编辑器
@@ -479,16 +538,10 @@ namespace KolidSoft.Json.UI
                     Switch.text = "Switch";
                     
                     if (SaveFile.index == -1) return;
-                    var saveFile = SaveFile.value;
-                    var saveSavePath = Path.Combine(
-                        setting.RootPath,saveFile,SaveSaveFullName
-                    );
-                    _saveSave = saveSavePath.BuildObject<SaveSave>();
-                    var sceneSavePath = Path.Combine(
-                        setting.RootPath,saveFile,SceneManager.GetActiveScene().name,SceneSaveFullName
-                    );
-                    _sceneSave = sceneSavePath.BuildObject<SceneSave>();
-                    
+                    JsonObject.SaveFile = SaveFile.value;
+                    SaveSave.Reload();
+                    SceneSave.Reload();
+
                     //创建LayoutSpace
                     var _ = LayoutSpace;
                     _switching = false;
